@@ -302,3 +302,87 @@ button {
 .promotion-choices .piece-glyph {
   font-size: 2.4rem;
 }
+
+/* ---------- Avatar studio ---------- */
+
+.avatar-studio {
+  width: 420px;
+}
+
+.studio-source,
+.studio-camera,
+.studio-crop,
+.studio-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.studio-error {
+  color: var(--danger);
+  margin: 0;
+}
+
+.studio-hint {
+  color: var(--muted);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.file-btn {
+  display: inline-block;
+}
+
+.btn-quiet {
+  opacity: 0.7;
+}
+
+.camera-preview {
+  width: 320px;
+  max-width: 80vw;
+  border-radius: 10px;
+  background: #000;
+  transform: scaleX(-1); /* selfie mirror */
+}
+
+.crop-canvas {
+  width: 320px;
+  height: 320px;
+  max-width: 80vw;
+  max-height: 80vw;
+  border-radius: 10px;
+  background: #000;
+  touch-action: none;
+  cursor: grab;
+}
+
+.crop-canvas:active {
+  cursor: grabbing;
+}
+
+.zoom-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 320px;
+  max-width: 80vw;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.zoom-row input {
+  flex: 1;
+}
+
+.studio-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.avatar-preview {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6);
+}
