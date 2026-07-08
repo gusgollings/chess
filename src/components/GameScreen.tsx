@@ -1,7 +1,9 @@
 import { useMemo, useRef, useState } from 'react';
 import type { Color, LegalTarget, PieceSymbol, Square } from '../engine/game';
 import { Game } from '../engine/game';
+import { royalName, type GameSetup } from '../state/players';
 import Board from './Board';
+import type { RoyalAvatar } from './Piece';
 import PromotionDialog from './PromotionDialog';
 
 const COLOR_NAME: Record<Color, string> = { w: 'White', b: 'Black' };
@@ -12,7 +14,11 @@ interface PendingPromotion {
   color: Color;
 }
 
-export default function GameScreen() {
+interface GameScreenProps {
+  setup?: GameSetup | null;
+}
+
+export default function GameScreen({ setup }: GameScreenProps) {
   const gameRef = useRef<Game>();
   if (!gameRef.current) gameRef.current = new Game();
   const game = gameRef.current;
@@ -68,10 +74,23 @@ export default function GameScreen() {
     rerender();
   }
 
+  function avatarFor(piece: { type: string; color: string }): RoyalAvatar | null {
+    if (!setup || (piece.type !== 'k' && piece.type !== 'q')) return null;
+    const player = setup[piece.color as Color];
+    const role = piece.type === 'k' ? 'king' : 'queen';
+    const url = player.avatars[role];
+    return url ? { url, name: royalName(player, role) } : null;
+  }
+
+  /** "Gus's army (White)" when configured, plain color name otherwise. */
+  function armyName(color: Color): string {
+    return setup ? `${setup[color].myName}'s army (${COLOR_NAME[color]})` : COLOR_NAME[color];
+  }
+
   let banner: string;
   let bannerClass = 'banner';
   if (status.isCheckmate) {
-    banner = `Checkmate — ${COLOR_NAME[status.winner!]} wins!`;
+    banner = `Checkmate — ${armyName(status.winner!)} wins!`;
     bannerClass += ' banner-over';
   } else if (status.isStalemate) {
     banner = 'Stalemate — draw.';
@@ -80,10 +99,10 @@ export default function GameScreen() {
     banner = 'Draw.';
     bannerClass += ' banner-over';
   } else if (status.inCheck) {
-    banner = `${COLOR_NAME[status.turn]} is in check! Pass to ${COLOR_NAME[status.turn]}.`;
+    banner = `${armyName(status.turn)} is in check!`;
     bannerClass += ' banner-danger';
   } else {
-    banner = `${COLOR_NAME[status.turn]} to move.`;
+    banner = `${armyName(status.turn)} to move.`;
   }
 
   return (
@@ -99,6 +118,7 @@ export default function GameScreen() {
         checkSquare={status.inCheck ? game.kingSquare(status.turn) : null}
         flipped={false}
         onSquareClick={onSquareClick}
+        avatarFor={avatarFor}
       />
       <div className="game-controls">
         <button onClick={restart}>Restart game</button>
